@@ -140,9 +140,16 @@ fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-echo "==> Downloading template..."
-curl -fsSL "https://codeload.github.com/${TEMPLATE_OWNER}/${TEMPLATE_REPO}/tar.gz/refs/heads/${TEMPLATE_REF}" |
-	tar -xz -C "$TMP" --strip-components=1
+if [[ -n "${TEMPLATE_SOURCE_DIR:-}" ]]; then
+	# Testing hook: point at a local checkout instead of downloading from
+	# GitHub (used by this repo's own CI; see CONTRIBUTING.md).
+	echo "==> Using local template source: $TEMPLATE_SOURCE_DIR"
+	(cd "$TEMPLATE_SOURCE_DIR" && tar -cf - --exclude=.git .) | tar -xf - -C "$TMP"
+else
+	echo "==> Downloading template..."
+	curl -fsSL "https://codeload.github.com/${TEMPLATE_OWNER}/${TEMPLATE_REPO}/tar.gz/refs/heads/${TEMPLATE_REF}" |
+		tar -xz -C "$TMP" --strip-components=1
+fi
 
 # --- copy backend + root files (everything except scaffold/ and setup.sh) --
 (cd "$TMP" && tar -cf - --exclude=scaffold --exclude=setup.sh .) | (cd "$TARGET_DIR" && tar -xf -)

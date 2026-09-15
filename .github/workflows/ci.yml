@@ -5,6 +5,12 @@ on:
   pull_request:
 
 jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck setup.sh
+
   setup-matrix:
     runs-on: ubuntu-latest
     strategy:
@@ -24,13 +30,9 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Point setup.sh at this checkout
-        run: |
-          mkdir -p /tmp/local-template
-          tar -cf - --exclude=.git . | (cd /tmp/local-template && tar -xf -)
-          sed -i 's#curl -fsSL "https://codeload.github.com/${TEMPLATE_OWNER}/${TEMPLATE_REPO}/tar.gz/refs/heads/${TEMPLATE_REF}" |#tar -cz -C /tmp/local-template --exclude=.git . |#' setup.sh
-
       - name: Scaffold project
+        env:
+          TEMPLATE_SOURCE_DIR: ${{ github.workspace }}
         run: |
           mkdir -p /tmp/generated
           bash setup.sh --dir /tmp/generated --name ci-test -y \
