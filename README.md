@@ -14,14 +14,14 @@ Selectable at scaffold time: Zod, Vitest, Storybook.
 ## Usage
 
 ```sh
-curl -fsSL https://github.com/<GH_OWNER>/pocketbase-react-template/raw/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/eidermaen/pocketbase-react-template/refs/heads/main/setup.sh | bash
 ```
 
 Run it in an empty directory. It'll prompt for a project name and which
 optional pieces to include (or pass flags for non-interactive use):
 
 ```sh
-curl -fsSL https://github.com/<GH_OWNER>/pocketbase-react-template/raw/main/setup.sh | \
+curl -fsSL https://raw.githubusercontent.com/eidermaen/pocketbase-react-template/refs/heads/main/setup.sh | \
   bash -s -- --name my-app --dir ./my-app --no-storybook -y
 ```
 
