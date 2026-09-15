@@ -1,0 +1,7 @@
+pb_data/
+bin/
+*.pem
+*.key
+.env
+.env.deploy
+.DS_Store

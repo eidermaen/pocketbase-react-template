@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        zod: ["--with-zod", "--no-zod"]
+        vitest: ["--with-vitest", "--no-vitest"]
+        storybook: ["--with-storybook", "--no-storybook"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Point setup.sh at this checkout
+        run: |
+          mkdir -p /tmp/local-template
+          tar -cf - --exclude=.git . | (cd /tmp/local-template && tar -xf -)
+          sed -i 's#curl -fsSL "https://codeload.github.com/${TEMPLATE_OWNER}/${TEMPLATE_REPO}/tar.gz/refs/heads/${TEMPLATE_REF}" |#tar -cz -C /tmp/local-template --exclude=.git . |#' setup.sh
+
+      - name: Scaffold project
+        run: |
+          mkdir -p /tmp/generated
+          bash setup.sh --dir /tmp/generated --name ci-test -y \
+            ${{ matrix.zod }} ${{ matrix.vitest }} ${{ matrix.storybook }}
+
+      - name: Build backend
+        working-directory: /tmp/generated
+        run: |
+          go build ./...
+          go vet ./...
+
+      - name: Typecheck + build frontend
+        working-directory: /tmp/generated/frontend
+        run: |
+          npx tsc --noEmit
+          npm run build
+
+      - name: Run unit tests
+        if: contains(matrix.vitest, '--with-vitest')
+        working-directory: /tmp/generated/frontend
+        run: npm run test
+
+      - name: Build Storybook
+        if: contains(matrix.storybook, '--with-storybook')
+        working-directory: /tmp/generated/frontend
+        run: npm run build-storybook

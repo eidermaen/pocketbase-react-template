@@ -1,0 +1,12 @@
+.git
+pb_data
+*.db*
+frontend/node_modules
+frontend/dist
+frontend/.storybook
+frontend/src/stories
+bin
+*.md
+.github
+scaffold
+setup.sh
