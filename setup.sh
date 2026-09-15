@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Scaffolds a new PocketBase + React project from this template.
 #
-#   curl -fsSL https://github.com/<GH_OWNER>/pocketbase-react-template/raw/main/setup.sh | bash
+#   curl -fsSL https://github.com/eidermaen/pocketbase-react-template/raw/main/setup.sh | bash
 #
 # See README.md for details and flags.
 set -euo pipefail
 
 # --- config -------------------------------------------------------------
-TEMPLATE_OWNER="<GH_OWNER>" # TODO: set once the template repo is pushed to GitHub
+TEMPLATE_OWNER="eidermaen" # TODO: set once the template repo is pushed to GitHub
 TEMPLATE_REPO="pocketbase-react-template"
 TEMPLATE_REF="main"
 TANSTACK_CLI_VERSION="0.71.0"
