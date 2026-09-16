@@ -247,6 +247,10 @@ npm run generate-routes
 cd "$TARGET_DIR"
 git init -q -b main
 git add -A
+# Fall back to a local-only identity if the user/CI runner has none
+# configured, without touching any real global git config.
+git config user.name >/dev/null 2>&1 || git config user.name "pocketbase-react-template"
+git config user.email >/dev/null 2>&1 || git config user.email "setup@localhost"
 git commit -q -m "Initial commit from pocketbase-react-template"
 
 cat <<EOF
